@@ -10,7 +10,8 @@
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
 	},
 	"dependencies": {
-		"feather-icons": "^4.28.0"
+		"feather-icons": "^4.28.0",
+		"fuzzysort": "^1.2.1"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",

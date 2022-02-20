@@ -2,12 +2,15 @@
 	import { onMount } from 'svelte';
 	import { icons } from 'feather-icons';
 
-	export let icon;
-	const svg = icon.toSvg({ width: 14, height: 14, color: '#999' });
+	export let icon, highlight;
 	let data = undefined;
 
 	let copied = false;
 	const checkIcon = icons.check.toSvg({ width: 14, height: 14, 'stroke-width': 2.5 });
+
+	function getSvg() {
+		return icon.toSvg({ width: 14, height: 14, color: '#999' });
+	}
 
 	function formatName() {
 		return upperCaseWords(icon.name[0].toUpperCase() + icon.name.slice(1).replace(/-/g, ' '));
@@ -29,18 +32,25 @@
 	}
 
 	onMount(() => {
-		data = `data:image/svg+xml;base64,${btoa(svg)}`;
+		data = `data:image/svg+xml;base64,${btoa(getSvg())}`;
 	});
 </script>
 
-<a on:click={() => copy()} href={data} class="tile" class:copied>
-	<div class="icon">
-		{@html svg}
-	</div>
-	<div class="name">{formatName()}</div>
-	<span class="copy"
-		>{#if copied}{@html checkIcon}{/if}</span
-	>
+<a on:click|preventDefault={() => copy()} href={data} class="tile" class:copied>
+	<span class="header">
+		<div class="icon">
+			{@html getSvg()}
+		</div>
+		<div class="name">{formatName()}</div>
+		<span class="copy">
+			{#if copied}{@html checkIcon}{/if}
+		</span>
+	</span>
+	{#if highlight}
+		<span class="highlight">
+			{@html highlight}
+		</span>
+	{/if}
 </a>
 
 <style>
@@ -50,9 +60,10 @@
 		transition: background 20ms ease-in;
 		box-shadow: rgb(15 15 15 / 10%) 0 0 0 1px, rgb(15 15 15 / 10%) 0 2px 4px;
 		border-radius: 3px;
-		display: flex;
 		padding: 10px;
-		gap: 6px;
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
 	}
 
 	.tile:hover {
@@ -61,6 +72,11 @@
 
 	.tile:active {
 		background-color: #f3f3f3;
+	}
+
+	.header {
+		display: flex;
+		gap: 6px;
 	}
 
 	.icon {
@@ -98,5 +114,15 @@
 
 	.tile:not(:hover) .copy {
 		opacity: 0;
+	}
+
+	.highlight {
+		font-size: 12px;
+		color: #999;
+	}
+
+	.highlight :global(strong) {
+		font-weight: 500;
+		color: rgb(55, 53, 47);
 	}
 </style>
